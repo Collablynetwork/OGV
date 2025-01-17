@@ -169,10 +169,10 @@ const logRSIAndPrice = (symbol, rsi15m, rsi5m, rsi1m, currentPrice, bullishVolum
   const timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
   const logData = `${timestamp},${symbol},${rsi15m},${rsi5m},${rsi1m},${bullishVolume},${bearishVolume},${currentPrice}\n`;
 
-  fs.appendFile(RSI_LOG_FILE, logData, (err) => {
-    if (err) console.error('Error writing to RSI log file:', err);
-    else console.log(`Logged RSI and price for ${symbol}`);
-  });
+//  fs.appendFile(RSI_LOG_FILE, logData, (err) => {
+//    if (err) console.error('Error writing to RSI log file:', err);
+//    else console.log(`Logged RSI and price for ${symbol}`);
+//  });
 };
 
 // Log buy signals
