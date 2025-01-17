@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 // Define the pairs to be tracked
 export const trackedPairs = [
   "BIOUSDT", "SUSHIUSDT", "ENAUSDT", "CETUSUSDT", "DOGEUSDT", "EOSUSDT", "ICPUSDT", "BONKUSDT", "NEIROUSDT", "TURBOUSDT", 
@@ -35,3 +37,64 @@ export const trackedPairs = [
   "ATAUSDT", "DENTUSDT", "PONDUSDT", "AIUSDT", "THEUSDT", "XVGUSDT", "ZENUSDT", "PENGUUSDT", 
   "VIBUSDT", "FISUSDT", "LITUSDT", "FXSUSDT", "VIDTUSDT", "WINGUSDT", "SUNUSDT", "SUSDT",
 ];
+
+// Split the pairs into two groups
+const group1 = trackedPairs.slice(0, Math.ceil(trackedPairs.length / 2));  // First half
+const group2 = trackedPairs.slice(Math.ceil(trackedPairs.length / 2));     // Second half
+
+// Function to fetch and calculate RSI for a group of pairs
+const fetchDataForGroup = async (group) => {
+  for (const symbol of group) {
+    await fetchAndCalculateRSI(symbol);  // Call the existing function for each pair
+    await delay(10000);  // Delay between each request (e.g., 10 seconds)
+  }
+};
+
+// Function to alternate between Group 1 and Group 2
+const alternateRequests = () => {
+  let group1Turn = true;  // Flag to alternate between groups
+
+  setInterval(async () => {
+    if (group1Turn) {
+      console.log("Processing Group 1...");
+      await fetchDataForGroup(group1);
+    } else {
+      console.log("Processing Group 2...");
+      await fetchDataForGroup(group2);
+    }
+
+    group1Turn = !group1Turn;  // Toggle the group
+  }, 60000);  // 60000ms = 1 minute
+};
+
+// Function to delay between requests (e.g., 10 seconds)
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Function to calculate RSI for a given pair
+const fetchAndCalculateRSI = async (symbol) => {
+  try {
+    const url = `https://api.binance.com/api/v3/klines`;
+    const params = {
+      symbol,
+      interval: '15m',  // Example: 15-minute interval
+      limit: 15,  // Number of candles to fetch
+    };
+
+    const response = await axios.get(url, { params });
+
+    if (!response.data || response.data.length === 0) {
+      console.error(`No data returned for ${symbol}`);
+      return;
+    }
+
+    // Process the data (e.g., calculate RSI)
+    console.log(`Processing RSI for ${symbol}`);
+    // Your logic for RSI calculation here
+
+  } catch (error) {
+    console.error(`Error fetching data for ${symbol}:`, error.message);
+  }
+};
+
+// Start alternating requests for pairs
+alternateRequests();
